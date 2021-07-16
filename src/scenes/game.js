@@ -1,5 +1,7 @@
 import Card from '../helpers/card';
 import Zone from '../helpers/zone';
+import Dealer from '../helpers/dealer';
+
 import io from 'socket.io-client';
 
 export default class Game extends Phaser.Scene {
@@ -20,11 +22,15 @@ export default class Game extends Phaser.Scene {
         let self = this;
 
         this.isPlayerA = false;
+        this.opponentCards = [];
 
         // DropZone
         this.zone = new Zone(this);
         this.dropZone = this.zone.renderZone();
         this.outline = this.zone.renderOutline(this.dropZone);
+
+        // Dealer
+        this.dealer = new Dealer(this);
 
         // Socket 
         this.socket = io('http://localhost:3000', {transports : ["websocket"] })
@@ -34,19 +40,24 @@ export default class Game extends Phaser.Scene {
         this.socket.on('isPlayerA', () => {
             self.isPlayerA = true;
         });
-
-        // Dealer
-        this.dealCards = () => {
-            for (let i = 0; i < 5; i++) {
-                let playerCard = new Card(this);
-                playerCard.render(475 + (i*100), 650, 'cyanCardFront');
+        this.socket.on('dealCards', () => {
+            self.dealer.dealCards();
+            self.dealText.disableInteractive();
+        });
+        this.socket.on('cardPlayed', (gameObject, isPlayerA) => {
+            if (isPlayerA !== self.isPlayerA) {
+                let sprite = gameObject.textureKey;
+                self.opponentCards.shift().destroy();
+                self.dropZone.data.values.cards++;
+                let card = new Card(self);
+                card.render(((self.dropZone.x - 350) + (self.dropZone.data.values.cards * 50)), (self.dropZone.y), sprite).disableInteractive();
             }
-        }
+        });
 
-        this.dealText = this.add.text(75, 350, ['Deal Cards']).setFontSize(18).setFontFamily('Trebuchet MS').setColor('#00ffff').setInteractive();
+        this.dealText = this.add.text(600, 875, ['Deal Cards']).setFontSize(22).setFontFamily('Trebuchet MS').setColor('#00ffff').setInteractive();
 
         this.dealText.on('pointerdown', () => {
-            self.dealCards();
+            self.socket.emit('dealCards');
         });
 
         this.dealText.on('pointerover', () => {
@@ -80,6 +91,7 @@ export default class Game extends Phaser.Scene {
             gameObject.x = (dropZone.x - 350) + (dropZone.data.values.cards * 50);
             gameObject.y = dropZone.y;
             gameObject.disableInteractive();
+            self.socket.emit('cardPlayed', gameObject, self.isPlayerA);
         });
     }
 
