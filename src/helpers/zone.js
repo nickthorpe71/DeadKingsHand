@@ -3,7 +3,7 @@ export default class Zone {
         this.renderZone = () => {
             // x,y,width,height
             let dropZone = scene.add.zone(700, 375, 900, 250).setRectangleDropZone(900, 250);
-            dropZone.setData({cards: 0});
+            dropZone.setData({ cards: 0 });
             return dropZone;
         };
         this.renderOutline = (dropZone) => {
