@@ -25,9 +25,9 @@ export default class Game extends Phaser.Scene {
         this.opponentCards = [];
 
         // DropZone
-        this.zone = new Zone(this);
-        this.dropZone = this.zone.renderZone();
-        this.outline = this.zone.renderOutline(this.dropZone);
+        this.board = new Zone(this);
+        this.dropZone = this.board.renderZone();
+        this.outline = this.board.renderOutline(this.dropZone);
 
         // Dealer
         this.dealer = new Dealer(this);
@@ -44,13 +44,13 @@ export default class Game extends Phaser.Scene {
             self.dealer.dealCards();
             self.dealText.disableInteractive();
         });
-        this.socket.on('cardPlayed', (gameObject, isPlayerA) => {
+        this.socket.on('cardPlayed', (card, isPlayerA) => {
             if (isPlayerA !== self.isPlayerA) {
-                let sprite = gameObject.textureKey;
+                let sprite = card.textureKey;
                 self.opponentCards.shift().destroy();
-                self.dropZone.data.values.cards++;
+                self.dropZone.data.values.cardsLayed++;
                 let card = new Card(self);
-                card.render(((self.dropZone.x - 350) + (self.dropZone.data.values.cards * 50)), (self.dropZone.y), sprite).disableInteractive();
+                card.render(((self.dropZone.x - 350) + (self.dropZone.data.values.cardsLayed * 50)), (self.dropZone.y), sprite).disableInteractive();
             }
         });
 
@@ -68,30 +68,40 @@ export default class Game extends Phaser.Scene {
             self.dealText.setColor('#00ffff');
         });
 
-        this.input.on('dragstart', (pointer, gameObject) => {
-            gameObject.setTint(0xff69b4);
-            self.children.bringToTop(gameObject);
+        this.input.on('dragstart', (pointer, card) => {
+            card.setTint(0xff69b4);
+            self.children.bringToTop(card);
         });
 
-        this.input.on('dragend', (pointer, gameObject, dropped) => {
-            gameObject.setTint();
+        this.input.on('dragend', (pointer, card, dropped) => {
+            card.setTint();
             if (!dropped) {
-                gameObject.x = gameObject.input.dragStartX;
-                gameObject.y = gameObject.input.dragStartY;
+                card.x = card.input.dragStartX;
+                card.y = card.input.dragStartY;
             }
         });
 
-        this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
-            gameObject.x = dragX;
-            gameObject.y = dragY;
+        this.input.on('drag', (pointer, card, dragX, dragY) => {
+            card.x = dragX;
+            card.y = dragY;
         });
 
-        this.input.on('drop', (pointer, gameObject, dropZone) => {
-            dropZone.data.values.cards++;
-            gameObject.x = (dropZone.x - 350) + (dropZone.data.values.cards * 50);
-            gameObject.y = dropZone.y;
-            gameObject.disableInteractive();
-            self.socket.emit('cardPlayed', gameObject, self.isPlayerA);
+        this.input.on('drop', (pointer, card, dropZone) => {
+            self.dropZone.data.values.cardsLayed++;
+
+            const xQuadrant = self.board.calcQuadrant(pointer.upX, 280, this.board.width);
+            const yQuadrant = self.board.calcQuadrant(pointer.upY, 125, this.board.height);
+
+            // TODO: need to create a card struct and use it to save card data
+            // could use existing Card class
+            self.dropZone.data.values.cards[yQuadrant][xQuadrant] = card;
+            console.log(self.dropZone.data.values.cards);
+
+            card.x = xQuadrant * 180 + 365;
+            card.y = yQuadrant * 180 + 232;
+            
+            card.disableInteractive();
+            self.socket.emit('cardPlayed', card, self.isPlayerA);
         });
     }
 
