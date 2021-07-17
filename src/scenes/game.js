@@ -31,7 +31,7 @@ export default class Game extends Phaser.Scene {
         // Data
         this.isPlayerA = false;
         this.opponentCardBacks = [];
-        this.myHand = this.loadCards();
+        this.myHand = [];
 
         // DropZone & Board
         this.board = new Zone(this);
@@ -46,9 +46,13 @@ export default class Game extends Phaser.Scene {
         this.socket.on('connect', () => {
             console.log('connected to server');
         });
+
         this.socket.on('isPlayerA', () => {
             self.isPlayerA = true;
+            this.myHand = this.loadCards();
+            this.enableDealing();
         });
+
         this.socket.on('dealCards', () => {
             self.dealer.dealCards();
             self.dealText.disableInteractive();
@@ -67,20 +71,6 @@ export default class Game extends Phaser.Scene {
                 let card = new Card(self);
                 card.render(xQuadrant * 180 + 370, yQuadrant * 180 + 205, sprite).disableInteractive();
             }
-        });
-
-        this.dealText = this.add.text(600, 875, ['Deal Cards']).setFontSize(22).setFontFamily('Trebuchet MS').setColor('#222').setInteractive();
-
-        this.dealText.on('pointerdown', () => {
-            self.socket.emit('dealCards');
-        });
-
-        this.dealText.on('pointerover', () => {
-            self.dealText.setColor('#5ee0cc');
-        });
-
-        this.dealText.on('pointerout', () => {
-            self.dealText.setColor('#222');
         });
 
         this.input.on('dragstart', (pointer, card) => {
@@ -133,12 +123,28 @@ export default class Game extends Phaser.Scene {
                 randomInt(1,4),
                 randomInt(1,4),
                 randomInt(1,4),
-                'mockCardRed'
+                (this.isPlayerA) ? 'mockCardBlue' : 'mockCardRed'
                 )
             )
         }
 
         return mockHand;
+    }
+
+    enableDealing() {
+        this.dealText = this.add.text(600, 875, ['Deal Cards']).setFontSize(22).setFontFamily('Trebuchet MS').setColor('#222').setInteractive();
+
+        this.dealText.on('pointerdown', () => {
+            this.socket.emit('dealCards');
+        });
+
+        this.dealText.on('pointerover', () => {
+            this.dealText.setColor('#5ee0cc');
+        });
+
+        this.dealText.on('pointerout', () => {
+            this.dealText.setColor('#222');
+        });
     }
 
     // update() {
