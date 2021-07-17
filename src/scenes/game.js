@@ -4,6 +4,8 @@ import Dealer from '../helpers/dealer';
 
 import io from 'socket.io-client';
 
+import randomInt from '../helpers/utils';
+
 export default class Game extends Phaser.Scene {
     constructor() {
         super({
@@ -12,19 +14,26 @@ export default class Game extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('cyanCardFront', 'src/assets/cyanCardFront.png');
-        this.load.image('cyanCardBack', 'src/assets/cyanCardBack.png');
-        this.load.image('magentaCardFront', 'src/assets/magentaCardFront.png');
-        this.load.image('magentaCardBack', 'src/assets/magentaCardBack.png');
+        this.load.image('cardBack', 'src/assets/CardBack.png');
+        this.load.image('mockCardBlue', 'src/assets/MockCardBlue.png');
+        this.load.image('mockCardRed', 'src/assets/MockCardRed.png');
+
+        this.objects = {};
     }
 
     create() {
         let self = this;
 
-        this.isPlayerA = false;
-        this.opponentCards = [];
+        // Camera
+        this.objects.camera = this.cameras.add(0, 0, 1280, 950);
+        this.objects.camera.setBackgroundColor('#d6c56f');
 
-        // DropZone
+        // Data
+        this.isPlayerA = false;
+        this.opponentCardBacks = [];
+        this.myHand = this.loadCards();
+
+        // DropZone & Board
         this.board = new Zone(this);
         this.dropZone = this.board.renderZone();
         this.outline = this.board.renderOutline(this.dropZone);
@@ -32,7 +41,7 @@ export default class Game extends Phaser.Scene {
         // Dealer
         this.dealer = new Dealer(this);
 
-        // Socket 
+        // Socket
         this.socket = io('http://localhost:3000', {transports : ["websocket"] })
         this.socket.on('connect', () => {
             console.log('connected to server');
@@ -44,32 +53,38 @@ export default class Game extends Phaser.Scene {
             self.dealer.dealCards();
             self.dealText.disableInteractive();
         });
-        this.socket.on('cardPlayed', (card, isPlayerA) => {
+        this.socket.on('cardPlayed', (gameObject, isPlayerA, xQuadrant, yQuadrant) => {
             if (isPlayerA !== self.isPlayerA) {
-                let sprite = card.textureKey;
+                let sprite = gameObject.textureKey;
+
                 self.opponentCards.shift().destroy();
+
                 self.dropZone.data.values.cardsLayed++;
+                gameObject.data.test = 'test'
+                self.dropZone.data.values.cards[yQuadrant][xQuadrant] = gameObject;
+                console.log(self.dropZone.data.values.cards);
+
                 let card = new Card(self);
-                card.render(((self.dropZone.x - 350) + (self.dropZone.data.values.cardsLayed * 50)), (self.dropZone.y), sprite).disableInteractive();
+                card.render(xQuadrant * 180 + 370, yQuadrant * 180 + 205, sprite).disableInteractive();
             }
         });
 
-        this.dealText = this.add.text(600, 875, ['Deal Cards']).setFontSize(22).setFontFamily('Trebuchet MS').setColor('#00ffff').setInteractive();
+        this.dealText = this.add.text(600, 875, ['Deal Cards']).setFontSize(22).setFontFamily('Trebuchet MS').setColor('#222').setInteractive();
 
         this.dealText.on('pointerdown', () => {
             self.socket.emit('dealCards');
         });
 
         this.dealText.on('pointerover', () => {
-            self.dealText.setColor('#ff69bf');
+            self.dealText.setColor('#5ee0cc');
         });
 
         this.dealText.on('pointerout', () => {
-            self.dealText.setColor('#00ffff');
+            self.dealText.setColor('#222');
         });
 
         this.input.on('dragstart', (pointer, card) => {
-            card.setTint(0xff69b4);
+            card.setTint(0x5ee0cc);
             self.children.bringToTop(card);
         });
 
@@ -97,12 +112,33 @@ export default class Game extends Phaser.Scene {
             self.dropZone.data.values.cards[yQuadrant][xQuadrant] = card;
             console.log(self.dropZone.data.values.cards);
 
-            card.x = xQuadrant * 180 + 365;
-            card.y = yQuadrant * 180 + 232;
+            card.x = xQuadrant * 180 + 370;
+            card.y = yQuadrant * 180 + 205;
             
             card.disableInteractive();
-            self.socket.emit('cardPlayed', card, self.isPlayerA);
+            self.socket.emit('cardPlayed', card, self.isPlayerA, xQuadrant, yQuadrant);
         });
+    }
+
+    loadCards() {
+        const mockHand = []
+
+        for (let i = 0; i < 8; i++) {
+            mockHand.push(new Card(
+                this,
+                'mock card',
+                randomInt(2,13),
+                randomInt(2,13),
+                randomInt(1,4),
+                randomInt(1,4),
+                randomInt(1,4),
+                randomInt(1,4),
+                'mockCardRed'
+                )
+            )
+        }
+
+        return mockHand;
     }
 
     // update() {
