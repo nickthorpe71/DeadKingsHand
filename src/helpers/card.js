@@ -8,7 +8,6 @@ export default class Card {
         this.down = down;
         this.left = left;
         this.image = image;
-        // TODO: add background color
         
         this.render = (x, y, sprite) => {
             let card = scene.add.image(x, y, sprite).setScale(0.246, 0.246).setInteractive();
@@ -27,3 +26,20 @@ export default class Card {
         };
     }
 }
+
+export function createCardData(name, attack, defense, up, right, down, left, image) {
+    // TODO: add background color
+    return {
+        name, 
+        attack, 
+        defense, 
+        up, 
+        right, 
+        down, 
+        left, 
+        image,
+        heightScale: 0.246,
+        widthScale: 0.246,
+    }
+}
+

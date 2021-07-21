@@ -1,10 +1,18 @@
 import Card from '../helpers/card';
 import Zone from '../helpers/zone';
 import Dealer from '../helpers/dealer';
+import {createPlayerData} from '../helpers/player';
 
 import io from 'socket.io-client';
 
 import randomInt from '../helpers/utils';
+
+// only contains card backs as this player will not need to 
+// know about their opponents card data until a card is played
+const opponentHand = [];
+
+const playerHand = createRandomHandData();
+const playerData = createPlayerData();
 
 export default class Game extends Phaser.Scene {
     constructor() {
@@ -28,11 +36,6 @@ export default class Game extends Phaser.Scene {
         this.objects.camera = this.cameras.add(0, 0, 1280, 950);
         this.objects.camera.setBackgroundColor('#d6c56f');
 
-        // Data
-        this.isPlayerA = false;
-        this.opponentCardBacks = [];
-        this.myHand = [];
-
         // DropZone & Board
         this.board = new Zone(this);
         this.dropZone = this.board.renderZone();
@@ -48,8 +51,8 @@ export default class Game extends Phaser.Scene {
         });
 
         this.socket.on('isPlayerA', () => {
-            self.isPlayerA = true;
-            this.myHand = this.loadCards();
+            playerData.isPlayerA = true;
+            this.myHand = this.loadRandomCards();
             this.enableDealing();
         });
 
@@ -73,11 +76,11 @@ export default class Game extends Phaser.Scene {
             }
         });
 
+        // Input
         this.input.on('dragstart', (pointer, card) => {
             card.setTint(0x5ee0cc);
             self.children.bringToTop(card);
         });
-
         this.input.on('dragend', (pointer, card, dropped) => {
             card.setTint();
             if (!dropped) {
@@ -85,22 +88,17 @@ export default class Game extends Phaser.Scene {
                 card.y = card.input.dragStartY;
             }
         });
-
         this.input.on('drag', (pointer, card, dragX, dragY) => {
             card.x = dragX;
             card.y = dragY;
         });
-
         this.input.on('drop', (pointer, card, dropZone) => {
             self.dropZone.data.values.cardsLayed++;
 
             const xQuadrant = self.board.calcQuadrant(pointer.upX, 280, this.board.width);
             const yQuadrant = self.board.calcQuadrant(pointer.upY, 125, this.board.height);
-
-            // TODO: need to create a card struct and use it to save card data
-            // could use existing Card class
+            
             self.dropZone.data.values.cards[yQuadrant][xQuadrant] = card;
-            console.log(self.dropZone.data.values.cards);
 
             card.x = xQuadrant * 180 + 370;
             card.y = yQuadrant * 180 + 205;
@@ -108,27 +106,6 @@ export default class Game extends Phaser.Scene {
             card.disableInteractive();
             self.socket.emit('cardPlayed', card, self.isPlayerA, xQuadrant, yQuadrant);
         });
-    }
-
-    loadCards() {
-        const mockHand = []
-
-        for (let i = 0; i < 8; i++) {
-            mockHand.push(new Card(
-                this,
-                'mock card',
-                randomInt(2,13),
-                randomInt(2,13),
-                randomInt(1,4),
-                randomInt(1,4),
-                randomInt(1,4),
-                randomInt(1,4),
-                (this.isPlayerA) ? 'mockCardBlue' : 'mockCardRed'
-                )
-            )
-        }
-
-        return mockHand;
     }
 
     enableDealing() {
@@ -147,7 +124,82 @@ export default class Game extends Phaser.Scene {
         });
     }
 
-    // update() {
+    // update() {}
+}
 
-    // }
+function createRandomHandData() {
+    const mockHand = []
+
+    for (let i = 0; i < 8; i++) {
+        const cardBack = (this.isPlayerA) ? 'mockCardBlue' : 'mockCardRed';
+        const newCard = Card.createCardData(
+            'mock card',
+            randomInt(2,13),
+            randomInt(2,13),
+            randomInt(1,4),
+            randomInt(1,4),
+            randomInt(1,4),
+            randomInt(1,4),
+            cardBack
+        );
+        mockHand.push(newCard);
+    }
+
+    return mockHand;
+}
+
+function instantiateGameObject(scene, x, y, sprite, data = {}, heightScale = 1, widthScale = 1, interactive = true, draggable = true) {
+    const newGameObject = scene.add.image(x, y, sprite).setScale(heightScale, widthScale);
+
+    if (interactive) newGameObject.setInteractive();
+    if (draggable) newGameObject.setDraggable(newGameObject);
+
+    scene.input.setDraggable(card);
+    newGameObject.data = data;
+
+    return newGameObject;
+}
+
+function dealCards(scene, xPos, handData = {}, numCardsToDeal = 8) {
+    const rightPlayerHandXPos = 1135;
+    const leftPlayerHandXpos = 145;
+    const handDistanceFromTop = 250;
+
+    for (let i = 0; i < numCardsToDeal; i++) {
+        // TODO: add background color check here
+        playerHand.myHand[i].render(rightPlayerHandXPos, handDistanceFromTop + (i * 60), scene.myHand[i].image);
+
+        const opponentCard =  instantiateGameObject(
+            scene, 
+            leftPlayerHandXpos, 
+            handDistanceFromTop + (i * 60),
+            'cardBack',
+            0.246,
+            0.246,
+            false,
+            false
+            )
+        opponentHand.push(opponentCard.render(leftPlayerHandXpos, handDistanceFromTop + (i * 60), 'cardBack').disableInteractive());
+    }
+}
+
+function dealCards(scene, xPos, handData = {}, numCardsToDeal = 8) {
+    const handDistanceFromTop = 250;
+
+    for (let i = 0; i < numCardsToDeal; i++) {
+        // TODO: add background color check here
+        playerHand.myHand[i].render(rightPlayerHandXPos, handDistanceFromTop + (i * 60), scene.myHand[i].image);
+
+        const opponentCard =  instantiateGameObject(
+            scene, 
+            xPos, 
+            handDistanceFromTop + (i * 60),
+            'cardBack',
+            0.246,
+            0.246,
+            false,
+            false
+            )
+        opponentHand.push(opponentCard.render(leftPlayerHandXpos, handDistanceFromTop + (i * 60), 'cardBack').disableInteractive());
+    }
 }
