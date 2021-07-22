@@ -1,11 +1,11 @@
-import Card from '../helpers/card';
-import Zone from '../helpers/zone';
-import Dealer from '../helpers/dealer';
-import {createPlayerData} from '../helpers/player';
+import Card from '../entities/card';
+import Zone from '../entities/zone';
+import Dealer from '../entities/dealer';
+import {createPlayerData} from '../entities/player';
 
 import io from 'socket.io-client';
 
-import randomInt from '../helpers/utils';
+import randomInt from '../entities/utils';
 
 // only contains card backs as this player will not need to 
 // know about their opponents card data until a card is played
@@ -183,7 +183,7 @@ function dealCards(scene, xPos, handData = {}, numCardsToDeal = 8) {
     }
 }
 
-function dealCards(scene, xPos, handData = {}, numCardsToDeal = 8) {
+function dealCards(scene, xPos, deckData = {}, numCardsToDeal = 8) {
     const handDistanceFromTop = 250;
 
     for (let i = 0; i < numCardsToDeal; i++) {
