@@ -1,0 +1,85 @@
+{
+    "name": "Faceless Hero",
+    "deck": [
+        {
+            "name":"Cain the Elder", 
+            "attack": 5, 
+            "defense": 4, 
+            "up": 2, 
+            "right": 1, 
+            "down": 2, 
+            "left": 1, 
+            "image": "mockCardRed"
+        },
+        {
+            "name":"Kael Rills", 
+            "attack": 7, 
+            "defense": 7, 
+            "up": 4, 
+            "right": 4, 
+            "down": 4, 
+            "left": 4, 
+            "image": "mockCardRed"
+        },
+        {
+            "name":"Pepin the Healer", 
+            "attack": 2, 
+            "defense": 4, 
+            "up": 2, 
+            "right": 2, 
+            "down": 2, 
+            "left": 2, 
+            "image": "mockCardRed"
+        },
+        {
+            "name":"Gillian the Barmaid", 
+            "attack": 11, 
+            "defense": 8, 
+            "up": 2, 
+            "right": 4, 
+            "down": 4, 
+            "left": 1, 
+            "image": "mockCardRed"
+        },
+        {
+            "name":"Griswold the Blacksmith", 
+            "attack": 10, 
+            "defense": 13, 
+            "up": 3, 
+            "right": 3, 
+            "down": 3, 
+            "left": 3, 
+            "image": "mockCardRed"
+        },
+        {
+            "name":"Farnham the Drunk", 
+            "attack": 3, 
+            "defense": 1, 
+            "up": 2, 
+            "right": 5, 
+            "down": 4, 
+            "left": 3, 
+            "image": "mockCardRed"
+        },
+        {
+            "name":"Ogden the Tavern Owner", 
+            "attack": 2, 
+            "defense": 3, 
+            "up": 3, 
+            "right": 3, 
+            "down": 3, 
+            "left": 3, 
+            "image": "mockCardRed"
+        },
+        {
+            "name":"Adria the Witch", 
+            "attack": 8, 
+            "defense": 5, 
+            "up": 3, 
+            "right": 3, 
+            "down": 2, 
+            "left": 3, 
+            "image": "mockCardRed"
+        }
+    ]
+}

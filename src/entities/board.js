@@ -1,5 +1,5 @@
 export function createBoardData() {
-    return { 
+    return Object.freeze({ 
         cardsLayed: 0,
         cards: [
             [null, null,  null, null],
@@ -7,8 +7,21 @@ export function createBoardData() {
             [null, null,  null, null],
             [null, null,  null, null]
         ]
-    };
+    });
 }
+
+export function createBoard (scene, width, height) {
+    // x,y,width,height
+    const dropZone = scene.add.zone(640, 475, width, height).setRectangleDropZone(width, height);
+
+    const dropZoneOutline = scene.add.graphics();
+    dropZoneOutline.lineStyle(2, 0x222222);
+    dropZoneOutline.strokeRect(dropZone.x - dropZone.input.hitArea.width/2, dropZone.y - dropZone.input.hitArea.height/2, dropZone.input.hitArea.width, dropZone.input.hitArea.height);
+
+    dropZone.setData(createBoardData());
+
+    return dropZone;
+};
 
 export function updateBoard(board, newCard) {
     return {

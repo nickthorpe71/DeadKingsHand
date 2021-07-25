@@ -1,8 +1,7 @@
 import { updateBoard } from "./board";
 
 export function createCardData(name, attack, defense, up, right, down, left, image, xQuadrant, yQuadrant, ownerColor, currentColor) {
-    // TODO: add background color
-    return {
+    return Object.freeze({
         name, 
         attack, 
         defense, 
@@ -17,7 +16,7 @@ export function createCardData(name, attack, defense, up, right, down, left, ima
         currentColor,
         heightScale: 0.246,
         widthScale: 0.246,
-    }
+    });
 }
 
 export function playInteraction(board, attacker, defender) {

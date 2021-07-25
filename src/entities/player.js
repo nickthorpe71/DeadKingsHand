@@ -1,13 +1,13 @@
 import { updateBoard } from "./board"
 
 export function createPlayerData(name, deck, color = 'red', hand = [], isPlayerA = false) {
-    return {
+    return Object.freeze({
         name,
         deck,
         color,
         hand,
         isPlayerA,
-    }
+    })
 }
 
 /**

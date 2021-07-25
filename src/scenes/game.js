@@ -1,18 +1,15 @@
 import Card from '../entities/card';
 import Zone from '../entities/zone';
 import Dealer from '../entities/dealer';
+
 import {createPlayerData} from '../entities/player';
+import {createBoard} from '../entities/board';
 
 import io from 'socket.io-client';
 
 import randomInt from '../entities/utils';
 
-// only contains card backs as this player will not need to 
-// know about their opponents card data until a card is played
-const opponentHand = [];
-
-const playerHand = createRandomHandData();
-const playerData = createPlayerData();
+const playerDataRequest = require('../data/mockPlayer.json');
 
 export default class Game extends Phaser.Scene {
     constructor() {
@@ -30,11 +27,16 @@ export default class Game extends Phaser.Scene {
     }
 
     create() {
-        let self = this;
+        const self = this;
 
-        // Camera
-        this.objects.camera = this.cameras.add(0, 0, 1280, 950);
-        this.objects.camera.setBackgroundColor('#d6c56f');
+        createCamera(self);
+        this.player = createPlayerData(playerDataRequest.name, playerDataRequest.deck);
+        this.opponent = createPlayerData('Opponent', []);
+        this.board = createBoard(self, 720, 720);
+
+        // create socket events
+        // create input events
+        
 
         // DropZone & Board
         this.board = new Zone(this);
@@ -67,9 +69,7 @@ export default class Game extends Phaser.Scene {
                 self.opponentCards.shift().destroy();
 
                 self.dropZone.data.values.cardsLayed++;
-                gameObject.data.test = 'test'
                 self.dropZone.data.values.cards[yQuadrant][xQuadrant] = gameObject;
-                console.log(self.dropZone.data.values.cards);
 
                 let card = new Card(self);
                 card.render(xQuadrant * 180 + 370, yQuadrant * 180 + 205, sprite).disableInteractive();
@@ -125,6 +125,11 @@ export default class Game extends Phaser.Scene {
     }
 
     // update() {}
+}
+
+function createCamera(scene) {
+    scene.objects.camera = this.cameras.add(0, 0, 1280, 950);
+    scene.objects.camera.setBackgroundColor('#d6c56f');
 }
 
 function createRandomHandData() {
