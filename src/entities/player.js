@@ -1,12 +1,14 @@
 import { updateBoard } from "./board"
+import { createCard } from '../entities/card';
+import { instantiateGameObject } from "../systems/gameEvents";
 
-export function createPlayerData(name, deck, color = 'red', hand = [], isPlayerA = false) {
+export function createPlayerData(name, deck, color = 'red', hand = [], isLocalPlayer = false) {
     return Object.freeze({
         name,
         deck,
         color,
         hand,
-        isPlayerA,
+        isLocalPlayer,
     })
 }
 
@@ -22,4 +24,24 @@ export function playCard(playedCard, hand, board) {
 
     const indexToRemove = hand.indexOf(playedCard);
     return hand.filter((card, index) => index === indexToRemove);
+}
+
+export function dealPlayerHand(scene, deck, player) {
+    return deck.map((cardData, index) => {
+        const handDistanceFromTop = 250;
+        // determine which x position to render hand
+        const handPosition = player.isLocalPlayer ? 1135 : 145;
+        const card = createCard(...cardData, 0, 0, player.color, player.color);
+        return instantiateGameObject(
+            scene,
+            handPosition, 
+            handDistanceFromTop + (index * 60),
+            card.image,
+            card,
+            0.246,
+            0.246,
+            isLocalPlayer,
+            isLocalPlayer
+        )
+    });
 }

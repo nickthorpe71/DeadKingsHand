@@ -9,7 +9,7 @@
             "right": 1, 
             "down": 2, 
             "left": 1, 
-            "image": "mockCardRed"
+            "image": "mockCardBlue"
         },
         {
             "name":"Kael Rills", 
@@ -19,7 +19,7 @@
             "right": 4, 
             "down": 4, 
             "left": 4, 
-            "image": "mockCardRed"
+            "image": "mockCardBlue"
         },
         {
             "name":"Pepin the Healer", 
@@ -29,7 +29,7 @@
             "right": 2, 
             "down": 2, 
             "left": 2, 
-            "image": "mockCardRed"
+            "image": "mockCardBlue"
         },
         {
             "name":"Gillian the Barmaid", 
@@ -39,7 +39,7 @@
             "right": 4, 
             "down": 4, 
             "left": 1, 
-            "image": "mockCardRed"
+            "image": "mockCardBlue"
         },
         {
             "name":"Griswold the Blacksmith", 
@@ -49,7 +49,7 @@
             "right": 3, 
             "down": 3, 
             "left": 3, 
-            "image": "mockCardRed"
+            "image": "mockCardBlue"
         },
         {
             "name":"Farnham the Drunk", 
@@ -59,7 +59,7 @@
             "right": 5, 
             "down": 4, 
             "left": 3, 
-            "image": "mockCardRed"
+            "image": "mockCardBlue"
         },
         {
             "name":"Ogden the Tavern Owner", 
@@ -69,7 +69,7 @@
             "right": 3, 
             "down": 3, 
             "left": 3, 
-            "image": "mockCardRed"
+            "image": "mockCardBlue"
         },
         {
             "name":"Adria the Witch", 
@@ -79,7 +79,7 @@
             "right": 3, 
             "down": 2, 
             "left": 3, 
-            "image": "mockCardRed"
+            "image": "mockCardBlue"
         }
     ]
 }
