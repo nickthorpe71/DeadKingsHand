@@ -1,5 +1,6 @@
 import io from 'socket.io-client';
-import { createPlayerData, dealPlayerHand } from '../entities/player';
+import { incrementBoardCardsLayed } from '../entities/board';
+import { createPlayerData, dealPlayerHand, removeCardFromHand } from '../entities/player';
 import { enableDealing } from './gameEvents';
 
 export function createSocket(uri) {
@@ -12,8 +13,8 @@ export function subscribeSocketToEvents(socket, scene) {
         console.log('connected to server');
     });
 
-    socket.on('isLocalPlayer', () => {
-        scene.player = createPlayerData(scene.player.name, scene.player.deck, 'blue', [], true);
+    socket.on('isPlayerA', () => {
+        scene.player = createPlayerData(scene.player.name, scene.player.deck, scene.player.isLocalPlayer, 'blue', [], true);
         enableDealing(scene);
     });
 
@@ -21,33 +22,45 @@ export function subscribeSocketToEvents(socket, scene) {
         scene.player = createPlayerData(
             scene.player.name, 
             scene.player.deck, 
+            scene.player.isLocalPlayer,
             scene.player.color, 
             dealPlayerHand(scene, scene.player.deck, scene.player),
-            scene.player.isLocalPlayer
+            scene.player.isPlayerA
         );
 
         scene.opponent = createPlayerData(
             scene.opponent.name, 
             scene.opponent.deck, 
+            scene.player.isLocalPlayer,
             scene.opponent.color, 
             dealPlayerHand(scene, scene.opponent.deck, scene.opponent),
-            scene.opponent.isLocalPlayer
+            scene.opponent.isPlayerA
         );
 
         scene.dealText.disableInteractive();
     });
 
-    socket.on('cardPlayed', (gameObject, isLocalPlayer, xQuadrant, yQuadrant) => {
-        if (isLocalPlayer !== scene.isLocalPlayer) {
-            let sprite = gameObject.textureKey;
+    socket.on('cardPlayed', (gameObject, isPlayerA, xQuadrant, yQuadrant) => {
+        // if the other player plays a card
+        if (isPlayerA !== scene.player.isPlayerA) {
+            const sprite = gameObject.textureKey;
 
-            scene.opponentCards.shift().destroy();
+            scene.opponent = createPlayerData(
+                scene.opponent.name,
+                scene.opponent.deck,
+                scene.player.isLocalPlayer,
+                scene.opponent.color,
+                removeCardFromHand(scene.opponent.hand.length-1, scene.opponent.hand),
+                scene.opponent.isPlayerA
+            )
 
-            scene.dropZone.data.values.cardsLayed++;
-            scene.dropZone.data.values.cards[yQuadrant][xQuadrant] = gameObject;
+            incrementBoardCardsLayed(scene.board);
 
-            let card = new Card(self);
-            card.render(xQuadrant * 180 + 370, yQuadrant * 180 + 205, sprite).disableInteractive();
+            // Lay card and play out recursive events
+
+            // scene.dropZone.data.values.cards[yQuadrant][xQuadrant] = gameObject;
+            // const card = new Card(self);
+            // card.render(xQuadrant * 180 + 370, yQuadrant * 180 + 205, sprite).disableInteractive();
         }
     });
 }

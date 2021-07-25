@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import Game from './scenes/game';
+import OnlineMatch from './scenes/onlineMatch';
 import Title from './scenes/title';
 
 const config = {
@@ -8,7 +8,7 @@ const config = {
     width: 1280,
     height: 950,
     scene: [
-        Game,
+        OnlineMatch,
         Title
     ]
 };

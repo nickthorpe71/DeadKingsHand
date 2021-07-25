@@ -2,10 +2,9 @@ export function instantiateGameObject(scene, x, y, sprite, data = {}, heightScal
     const newGameObject = scene.add.image(x, y, sprite).setScale(heightScale, widthScale);
 
     if (interactive) newGameObject.setInteractive();
-    if (draggable) newGameObject.setDraggable(newGameObject);
-
-    scene.input.setDraggable(newGameObject);
-    newGameObject.data = data;
+    if (draggable) scene.input.setDraggable(newGameObject);
+    
+    newGameObject.data = {...newGameObject.data, ...data};
 
     return newGameObject;
 }

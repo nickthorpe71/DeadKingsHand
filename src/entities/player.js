@@ -1,15 +1,16 @@
 import { updateBoard } from "./board"
-import { createCard } from '../entities/card';
+import { createCardData } from '../entities/card';
 import { instantiateGameObject } from "../systems/gameEvents";
 
-export function createPlayerData(name, deck, color = 'red', hand = [], isLocalPlayer = false) {
+export function createPlayerData(name, deck, isLocalPlayer, color = 'red', hand = [], isPlayerA = false) {
     return Object.freeze({
         name,
         deck,
         color,
         hand,
-        isLocalPlayer,
-    })
+        isPlayerA,
+        isLocalPlayer
+    });
 }
 
 /**
@@ -31,7 +32,20 @@ export function dealPlayerHand(scene, deck, player) {
         const handDistanceFromTop = 250;
         // determine which x position to render hand
         const handPosition = player.isLocalPlayer ? 1135 : 145;
-        const card = createCard(...cardData, 0, 0, player.color, player.color);
+        const card = createCardData(
+            cardData.name,
+            cardData.attack,
+            cardData.defense,
+            cardData.up,
+            cardData.right,
+            cardData.down,
+            cardData.left,
+            cardData.image,
+            0, 
+            0, 
+            player.color, 
+            player.color
+        );
         return instantiateGameObject(
             scene,
             handPosition, 
@@ -40,8 +54,17 @@ export function dealPlayerHand(scene, deck, player) {
             card,
             0.246,
             0.246,
-            isLocalPlayer,
-            isLocalPlayer
+            player.isLocalPlayer,
+            player.isLocalPlayer
         )
     });
 }
+
+export function removeCardFromHand(indexToRemove, hand) {
+    // need to call destroy to manage gameobejct within Phaser
+    // hand[indexToRemove].destroy();
+    
+    return hand.filter((item, itemIndex) => {
+        return indexToRemove !== itemIndex;
+    });
+};

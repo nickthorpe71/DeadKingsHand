@@ -1,13 +1,10 @@
-export function createBoardData() {
-    return Object.freeze({ 
-        cardsLayed: 0,
-        cards: [
-            [null, null,  null, null],
-            [null, null,  null, null],
-            [null, null,  null, null],
-            [null, null,  null, null]
-        ]
-    });
+export function createBoardData(cardsLayed, cards = [
+    [null, null,  null, null],
+    [null, null,  null, null],
+    [null, null,  null, null],
+    [null, null,  null, null]
+]) {
+    return Object.freeze({ cardsLayed,cards});
 }
 
 export function createBoard (scene, width, height) {
@@ -18,12 +15,16 @@ export function createBoard (scene, width, height) {
     dropZoneOutline.lineStyle(2, 0x222222);
     dropZoneOutline.strokeRect(dropZone.x - dropZone.input.hitArea.width/2, dropZone.y - dropZone.input.hitArea.height/2, dropZone.input.hitArea.width, dropZone.input.hitArea.height);
 
-    dropZone.setData(createBoardData());
+    dropZone.setData(createBoardData(0));
 
     return dropZone;
 };
 
-export function updateBoard(board, newCard) {
+export function incrementBoardCardsLayed(board) {
+    board.setData(createBoardData(board.cardsLayed + 1, board.cards));
+}   
+
+export function updateBoardCards(board, newCard) {
     return {
         cardsLayed: board.cardsLayed + 1,
         cards: board.map(currentCard => {
