@@ -14,8 +14,25 @@ export function subscribeSocketToEvents(socket, scene) {
     });
 
     socket.on('isPlayerA', () => {
-        scene.player = createPlayerData(scene.player.name, scene.player.deck, scene.player.isLocalPlayer, 'blue', [], true);
+        // Will need to change to only adjust the background of the card
+        const playerDeckColorAdjust = scene.player.deck.map(card => {
+            return {
+                name:card.name, 
+                attack: card.attack, 
+                defense: card.defense, 
+                up: card.up, 
+                right: card.right, 
+                down: card.down, 
+                left: card.left, 
+                image: "mockCardBlue"
+            }
+        })
+
+        scene.player = createPlayerData(scene.player.name, playerDeckColorAdjust, scene.player.isLocalPlayer, 'blue', [], true);
         enableDealing(scene);
+        
+        
+
     });
 
     socket.on('dealCards', () => {
@@ -31,7 +48,7 @@ export function subscribeSocketToEvents(socket, scene) {
         scene.opponent = createPlayerData(
             scene.opponent.name, 
             scene.opponent.deck, 
-            scene.player.isLocalPlayer,
+            scene.opponent.isLocalPlayer,
             scene.opponent.color, 
             dealPlayerHand(scene, scene.opponent.deck, scene.opponent),
             scene.opponent.isPlayerA
@@ -48,7 +65,7 @@ export function subscribeSocketToEvents(socket, scene) {
             scene.opponent = createPlayerData(
                 scene.opponent.name,
                 scene.opponent.deck,
-                scene.player.isLocalPlayer,
+                scene.opponent.isLocalPlayer,
                 scene.opponent.color,
                 removeCardFromHand(scene.opponent.hand.length-1, scene.opponent.hand),
                 scene.opponent.isPlayerA
