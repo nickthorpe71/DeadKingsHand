@@ -8,6 +8,7 @@ import {subscribeToLocalCardInputEvents} from '../systems/cardInput';
 
 // Mock API calls
 const playerDataRequest = require('../data/mockPlayer.json');
+
 const mockOpponent = require('../data/mockOpponent.json');
 
 // Use this example to switch to function instead of class
@@ -30,6 +31,7 @@ export default class OnlineMatch extends Phaser.Scene {
 
     create() {
         const self = this;
+        this.count = 0;
 
         // Entities
         createCamera(self);
@@ -42,6 +44,9 @@ export default class OnlineMatch extends Phaser.Scene {
         subscribeSocketToEvents(self.socket, self);
         subscribeToLocalCardInputEvents(self);
     }
+
+    // update() {
+    // }
 }
 
 function createCamera(scene) {

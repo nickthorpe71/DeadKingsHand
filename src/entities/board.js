@@ -1,3 +1,7 @@
+import { createCardData } from "./card";
+import { createPlayerData, removeCardFromHand } from "./player";
+import { instantiateGameObject } from "../systems/gameEvents";
+
 export function createBoardData(cardsLayed = 0, cards = [
     [null, null,  null, null],
     [null, null,  null, null],
@@ -34,8 +38,6 @@ export function updatedBoardCards(board, newCard) {
     });
 };
 
-// TODO: need to refactor so its less confusing
-// Shouldn't be passing in width OR height
 export function calcQuadrant(pointerDown, edgeComp, widthOrHeight) {
     // compensate for the distance between the left most edge 
     // of the screen and the left or right most edge of the board
@@ -52,4 +54,60 @@ export function calcQuadrant(pointerDown, edgeComp, widthOrHeight) {
         quadrant = 3;
 
     return quadrant;
+}
+
+export function addCardToBoard(scene, isLocalPlayer, card, xQuadrant, yQuadrant) {
+    // calculate position of new card
+    const xPos = xQuadrant * 180 + 370;
+    const yPos = yQuadrant * 180 + 205;
+
+    // set quadrants of card
+    card.data = createCardData(
+        card.data.name,
+        card.data.attack,
+        card.data.defence,
+        card.data.up,
+        card.data.right,
+        card.data.down,
+        card.data.left,
+        card.data.image,
+        xQuadrant,
+        yQuadrant,
+        card.data.ownerColor,
+        card.data.currentColor,
+    )
+    
+    if (isLocalPlayer) {
+        // remove card from players hand
+        scene.player = createPlayerData(
+            scene.player.name, 
+            scene.player.deck, 
+            scene.player.isLocalPlayer,
+            scene.player.color, 
+            removeCardFromHand(scene.player.hand.indexOf(card), scene.player.hand),
+            scene.player.isPlayerA
+        );
+        
+        // snap card to board slot
+        card.x = xPos;
+        card.y = yPos;
+    } else {
+        // remove card from opponents mock hand
+        scene.opponent = createPlayerData(
+            scene.opponent.name,
+            scene.opponent.deck,
+            scene.opponent.isLocalPlayer,
+            scene.opponent.color,
+            removeCardFromHand(scene.opponent.hand.length-1, scene.opponent.hand),
+            scene.opponent.isPlayerA
+        );
+        
+        instantiateGameObject(scene, xPos, yPos, card.data, card.data.heightScale, card.data.widthScale, false, false);
+    }
+
+    // add card to board data 
+    scene.board.data.values = createBoardData(
+        updatedCardsLayed(scene.board),
+        updatedBoardCards(scene.board, card)
+    );
 }

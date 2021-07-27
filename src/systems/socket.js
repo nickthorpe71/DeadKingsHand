@@ -1,5 +1,5 @@
 import io from 'socket.io-client';
-import { incrementBoardCardsLayed } from '../entities/board';
+import { addCardToBoard, incrementBoardCardsLayed } from '../entities/board';
 import { createPlayerData, dealPlayerHand, removeCardFromHand } from '../entities/player';
 import { enableDealing } from './gameEvents';
 
@@ -26,7 +26,7 @@ export function subscribeSocketToEvents(socket, scene) {
                 left: card.left, 
                 image: "mockCardBlue"
             }
-        })
+        });
 
         scene.player = createPlayerData(scene.player.name, playerDeckColorAdjust, scene.player.isLocalPlayer, 'blue', [], true);
         enableDealing(scene);
@@ -50,33 +50,12 @@ export function subscribeSocketToEvents(socket, scene) {
             dealPlayerHand(scene, scene.opponent.deck, scene.opponent),
             scene.opponent.isPlayerA
         );
-
-        console.log('deal board', scene.board.data.values)
-
-        scene.dealText.disableInteractive();
     });
 
-    socket.on('cardPlayed', (gameObject, isPlayerA, xQuadrant, yQuadrant) => {
+    socket.on('cardPlayed', (card, isPlayerA, xQuadrant, yQuadrant) => {
         // if the other player plays a card
         if (isPlayerA !== scene.player.isPlayerA) {
-            const sprite = gameObject.textureKey;
-
-            scene.opponent = createPlayerData(
-                scene.opponent.name,
-                scene.opponent.deck,
-                scene.opponent.isLocalPlayer,
-                scene.opponent.color,
-                removeCardFromHand(scene.opponent.hand.length-1, scene.opponent.hand),
-                scene.opponent.isPlayerA
-            )
-
-            incrementBoardCardsLayed(scene.board);
-
-            // Lay card and play out recursive events
-
-            // scene.dropZone.data.values.cards[yQuadrant][xQuadrant] = gameObject;
-            // const card = new Card(self);
-            // card.render(xQuadrant * 180 + 370, yQuadrant * 180 + 205, sprite).disableInteractive();
+            addCardToBoard(scene, false, card, xQuadrant, yQuadrant);
         }
     });
 }

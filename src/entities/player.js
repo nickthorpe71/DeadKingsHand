@@ -32,6 +32,7 @@ export function dealPlayerHand(scene, deck, player) {
         const handDistanceFromTop = 250;
         // determine which x position to render hand
         const handPosition = player.isLocalPlayer ? 1135 : 145;
+
         const card = createCardData(
             cardData.name,
             cardData.attack,
@@ -46,14 +47,15 @@ export function dealPlayerHand(scene, deck, player) {
             player.color, 
             player.color
         );
+        
         return instantiateGameObject(
             scene,
             handPosition, 
             handDistanceFromTop + (index * 60),
             card.image,
             card,
-            0.246,
-            0.246,
+            card.heightScale,
+            card.widthScale,
             player.isLocalPlayer,
             player.isLocalPlayer
         )
