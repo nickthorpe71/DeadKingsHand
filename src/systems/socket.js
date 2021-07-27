@@ -30,9 +30,6 @@ export function subscribeSocketToEvents(socket, scene) {
 
         scene.player = createPlayerData(scene.player.name, playerDeckColorAdjust, scene.player.isLocalPlayer, 'blue', [], true);
         enableDealing(scene);
-        
-        
-
     });
 
     socket.on('dealCards', () => {
@@ -53,6 +50,8 @@ export function subscribeSocketToEvents(socket, scene) {
             dealPlayerHand(scene, scene.opponent.deck, scene.opponent),
             scene.opponent.isPlayerA
         );
+
+        console.log('deal board', scene.board.data.values)
 
         scene.dealText.disableInteractive();
     });

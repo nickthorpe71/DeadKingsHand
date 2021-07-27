@@ -1,10 +1,10 @@
-export function createBoardData(cardsLayed, cards = [
+export function createBoardData(cardsLayed = 0, cards = [
     [null, null,  null, null],
     [null, null,  null, null],
     [null, null,  null, null],
     [null, null,  null, null]
 ]) {
-    return Object.freeze({ cardsLayed,cards});
+    return Object.freeze({ cardsLayed, cards});
 }
 
 export function createBoard (scene, width, height) {
@@ -20,18 +20,18 @@ export function createBoard (scene, width, height) {
     return dropZone;
 };
 
-export function incrementBoardCardsLayed(board) {
-    board.setData(createBoardData(board.cardsLayed + 1, board.cards));
-}   
+export function updatedCardsLayed(board) {
+    return board.data.values.cardsLayed + 1
+}
 
-export function updateBoardCards(board, newCard) {
-    return {
-        cardsLayed: board.cardsLayed + 1,
-        cards: board.map(currentCard => {
-            return (currentCard.xQuadrant === newCard.xQuadrant && currentCard.yQuadrant === newCard.yQuadrant)
-                    ? newCard : currentCard;
-            })
-    }
+export function updatedBoardCards(board, newCard) {
+    return board.data.values.cards.map((currentBoardRow, yPos) => {
+        return board.data.values.cards[yPos].map((currentBoardSlotItem, xPos) => {
+            if (yPos === newCard.data.yQuadrant && xPos === newCard.data.xQuadrant)
+                return newCard;
+            return currentBoardSlotItem;
+        });
+    });
 };
 
 // TODO: need to refactor so its less confusing
