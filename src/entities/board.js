@@ -1,6 +1,5 @@
-import { createCardData } from "./card";
+import { attackSuccess, flipCard } from "./card";
 import { createPlayerData, removeCardFromHand } from "./player";
-import { instantiateGameObject } from "../systems/gameEvents";
 
 export function createBoardData(cardsLayed = 0, cards = [
     [null, null,  null, null],
@@ -31,7 +30,7 @@ export function updatedCardsLayed(board) {
 export function updatedBoardCards(board, newCard) {
     return board.data.values.cards.map((currentBoardRow, yPos) => {
         return board.data.values.cards[yPos].map((currentBoardSlotItem, xPos) => {
-            if (yPos === newCard.data.yQuadrant && xPos === newCard.data.xQuadrant)
+            if (yPos === newCard.data.values.yQuadrant && xPos === newCard.data.values.xQuadrant)
                 return newCard;
             return currentBoardSlotItem;
         });
@@ -57,57 +56,69 @@ export function calcQuadrant(pointerDown, edgeComp, widthOrHeight) {
 }
 
 export function addCardToBoard(scene, isLocalPlayer, card, xQuadrant, yQuadrant) {
-    // calculate position of new card
-    const xPos = xQuadrant * 180 + 370;
-    const yPos = yQuadrant * 180 + 205;
-
-    // set quadrants of card
-    card.data = createCardData(
-        card.data.name,
-        card.data.attack,
-        card.data.defence,
-        card.data.up,
-        card.data.right,
-        card.data.down,
-        card.data.left,
-        card.data.image,
-        xQuadrant,
-        yQuadrant,
-        card.data.ownerColor,
-        card.data.currentColor,
-    )
+    // snap card to board slot
+    card.x = xQuadrant * 180 + 370;
+    card.y = yQuadrant * 180 + 205;
     
     if (isLocalPlayer) {
         // remove card from players hand
-        scene.player = createPlayerData(
-            scene.player.name, 
-            scene.player.deck, 
-            scene.player.isLocalPlayer,
-            scene.player.color, 
-            removeCardFromHand(scene.player.hand.indexOf(card), scene.player.hand),
-            scene.player.isPlayerA
+        scene.localPlayer = createPlayerData(
+            scene.localPlayer.name,
+            scene.localPlayer.deck,
+            scene.localPlayer.isLocalPlayer,
+            scene.localPlayer.score,
+            scene.localPlayer.color,
+            removeCardFromHand(scene.localPlayer.hand.indexOf(card), scene.localPlayer.hand),
+            scene.localPlayer.isPlayerA
         );
-        
-        // snap card to board slot
-        card.x = xPos;
-        card.y = yPos;
     } else {
-        // remove card from opponents mock hand
-        scene.opponent = createPlayerData(
-            scene.opponent.name,
-            scene.opponent.deck,
-            scene.opponent.isLocalPlayer,
-            scene.opponent.color,
-            removeCardFromHand(scene.opponent.hand.length-1, scene.opponent.hand),
-            scene.opponent.isPlayerA
+        // remove top placeholder card from opponents hand
+        scene.mockOpponent.hand[0].destroy();
+
+        scene.mockOpponent = createPlayerData(
+            scene.mockOpponent.name,
+            scene.mockOpponent.deck,
+            scene.mockOpponent.isLocalPlayer,
+            scene.mockOpponent.score,
+            scene.mockOpponent.color,
+            removeCardFromHand(0, scene.mockOpponent.hand),
+            scene.mockOpponent.isPlayerA
         );
-        
-        instantiateGameObject(scene, xPos, yPos, card.data, card.data.heightScale, card.data.widthScale, false, false);
     }
 
     // add card to board data 
-    scene.board.data.values = createBoardData(
+    scene.board.setData(createBoardData(
         updatedCardsLayed(scene.board),
         updatedBoardCards(scene.board, card)
-    );
+    ));
+    
+    // trigger attack to new cards surrounding neighbors
+    attackNeighbors(scene, card, scene.board)
+
+    return card;
+}
+
+export function attackNeighbors(scene, card, board) {
+    const navPointerMap = [
+        { yAdjust:-1, xAdjust: 0, attackDirection: 'up', defendDirection: 'down' },
+        { yAdjust: 0, xAdjust: 1, attackDirection: 'right', defendDirection: 'left' },
+        { yAdjust: 1, xAdjust: 0, attackDirection: 'down', defendDirection: 'up' },
+        { yAdjust: 0, xAdjust: -1, attackDirection: 'left', defendDirection: 'right' },
+    ];
+
+    navPointerMap.forEach(navPointer => {
+        if (board.data.values.cards[card.data.values.yQuadrant + navPointer.yAdjust]) {
+            const target = board.data.values.cards[card.data.values.yQuadrant + navPointer.yAdjust][card.data.values.xQuadrant + navPointer.xAdjust];
+
+            if (target && target.data.values.currentColor !== card.data.values.currentColor
+                && attackSuccess(card.data.values, target.data.values, navPointer.attackDirection, navPointer.defendDirection)) {
+                board.setData(createBoardData(
+                    board.data.values.cardsLayed,
+                    updatedBoardCards(board, flipCard(scene, target))
+                ));
+
+                // TODO: Destroy old card render at some point
+            }
+        }
+    });
 }

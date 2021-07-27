@@ -1,7 +1,7 @@
 import io from 'socket.io-client';
-import { addCardToBoard, incrementBoardCardsLayed } from '../entities/board';
-import { createPlayerData, dealPlayerHand, removeCardFromHand } from '../entities/player';
-import { enableDealing } from './gameEvents';
+import { addCardToBoard } from '../entities/board';
+import { createPlayerData, dealPlayerHand } from '../entities/player';
+import { enableDealing, instantiateGameObject } from './gameEvents';
 
 export function createSocket(uri) {
     return io(uri, {transports : ["websocket"] })
@@ -15,7 +15,7 @@ export function subscribeSocketToEvents(socket, scene) {
 
     socket.on('isPlayerA', () => {
         // Will need to change to only adjust the background of the card
-        const playerDeckColorAdjust = scene.player.deck.map(card => {
+        const playerDeckColorAdjust = scene.localPlayer.deck.map(card => {
             return {
                 name:card.name, 
                 attack: card.attack, 
@@ -28,34 +28,37 @@ export function subscribeSocketToEvents(socket, scene) {
             }
         });
 
-        scene.player = createPlayerData(scene.player.name, playerDeckColorAdjust, scene.player.isLocalPlayer, 'blue', [], true);
+        scene.localPlayer = createPlayerData(scene.localPlayer.name, playerDeckColorAdjust, scene.localPlayer.isLocalPlayer, scene.localPlayer.score, 'blue', [], true);
         enableDealing(scene);
     });
 
     socket.on('dealCards', () => {
-        scene.player = createPlayerData(
-            scene.player.name, 
-            scene.player.deck, 
-            scene.player.isLocalPlayer,
-            scene.player.color, 
-            dealPlayerHand(scene, scene.player.deck, scene.player),
-            scene.player.isPlayerA
+        scene.localPlayer = createPlayerData(
+            scene.localPlayer.name, 
+            scene.localPlayer.deck, 
+            scene.localPlayer.isLocalPlayer,
+            scene.localPlayer.score,
+            scene.localPlayer.color, 
+            dealPlayerHand(scene, scene.localPlayer.deck, scene.localPlayer),
+            scene.localPlayer.isPlayerA
         );
 
-        scene.opponent = createPlayerData(
-            scene.opponent.name, 
-            scene.opponent.deck, 
-            scene.opponent.isLocalPlayer,
-            scene.opponent.color, 
-            dealPlayerHand(scene, scene.opponent.deck, scene.opponent),
-            scene.opponent.isPlayerA
+        scene.mockOpponent = createPlayerData(
+            scene.mockOpponent.name, 
+            scene.mockOpponent.deck, 
+            scene.mockOpponent.isLocalPlayer,
+            scene.mockOpponent.score, 
+            scene.mockOpponent.color, 
+            dealPlayerHand(scene, scene.mockOpponent.deck, scene.mockOpponent),
+            scene.mockOpponent.isPlayerA
         );
     });
 
-    socket.on('cardPlayed', (card, isPlayerA, xQuadrant, yQuadrant) => {
+    socket.on('cardPlayed', (card, cardData, isPlayerA, xQuadrant, yQuadrant) => {
         // if the other player plays a card
-        if (isPlayerA !== scene.player.isPlayerA) {
-            addCardToBoard(scene, false, card, xQuadrant, yQuadrant);
+        if (isPlayerA !== scene.localPlayer.isPlayerA) {
+            const updatedCard = instantiateGameObject(scene, 0, 0, card.textureKey, cardData, cardData.heightScale, cardData.widthScale, false, false);
+            addCardToBoard(scene, false, updatedCard, xQuadrant, yQuadrant);
         }
     });
 }

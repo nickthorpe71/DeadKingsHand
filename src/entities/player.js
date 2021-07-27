@@ -2,14 +2,15 @@ import { updateBoard } from "./board"
 import { createCardData } from '../entities/card';
 import { instantiateGameObject } from "../systems/gameEvents";
 
-export function createPlayerData(name, deck, isLocalPlayer, color = 'red', hand = [], isPlayerA = false) {
+export function createPlayerData(name, deck, isLocalPlayer, score, color = 'red', hand = [], isPlayerA = false) {
     return Object.freeze({
         name,
         deck,
+        isLocalPlayer,
+        score,
         color,
         hand,
-        isPlayerA,
-        isLocalPlayer
+        isPlayerA
     });
 }
 

@@ -1,13 +1,11 @@
-import { addCardToBoard, calcQuadrant } from '../entities/board';
+import { addCardToBoard, calcQuadrant, updatedBoardCards } from '../entities/board';
+import { createCardData } from '../entities/card';
 
 export function subscribeToLocalCardInputEvents(scene) {
 
     scene.input.on('dragstart', (pointer, card) => {
         card.setTint(0x5ee0cc);
         scene.children.bringToTop(card);
-
-        console.log(scene.player.hand);
-        console.log(card.data);
     });
 
     scene.input.on('drag', (pointer, card, dragX, dragY) => {
@@ -21,7 +19,6 @@ export function subscribeToLocalCardInputEvents(scene) {
             card.x = card.input.dragStartX;
             card.y = card.input.dragStartY;
         }
-        console.log(card.data);
     });
 
     scene.input.on('drop', (pointer, card) => {
@@ -34,10 +31,25 @@ export function subscribeToLocalCardInputEvents(scene) {
             card.x = card.input.dragStartX;
             card.y = card.input.dragStartY;
         } else {
-            addCardToBoard(scene, true, card, xQuadrant, yQuadrant);
-            
+            // set quadrants of card
+            card.setData(createCardData(
+                card.data.values.name,
+                card.data.values.attack,
+                card.data.values.defense,
+                card.data.values.up,
+                card.data.values.right,
+                card.data.values.down,
+                card.data.values.left,
+                card.data.values.image,
+                xQuadrant,
+                yQuadrant,
+                card.data.values.ownerColor,
+                card.data.values.currentColor,
+            ));
+
+            const updatedCard = addCardToBoard(scene, true, card, xQuadrant, yQuadrant);
             // emit event to server (to send to other player)
-            scene.socket.emit('cardPlayed', card, scene.player.isPlayerA, xQuadrant, yQuadrant);
-        }            
+            scene.socket.emit('cardPlayed', updatedCard, updatedCard.data.values, scene.localPlayer.isPlayerA, xQuadrant, yQuadrant);
+        }
     });
 }

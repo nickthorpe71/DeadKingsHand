@@ -33,16 +33,16 @@ export default class OnlineMatch extends Phaser.Scene {
         const self = this;
         this.count = 0;
 
-        // Entities
-        createCamera(self);
-        self.player = createPlayerData(playerDataRequest.name, playerDataRequest.deck, true);
-        self.opponent = createPlayerData(mockOpponent.name, mockOpponent.deck, false);
-        self.board = createBoard(self, 720, 720);
-
         // Systems
         self.socket = createSocket('http://localhost:3000');
         subscribeSocketToEvents(self.socket, self);
         subscribeToLocalCardInputEvents(self);
+
+        // Entities
+        createCamera(self);
+        self.localPlayer = createPlayerData(playerDataRequest.name, playerDataRequest.deck, true, 0);
+        self.mockOpponent = createPlayerData(mockOpponent.name, mockOpponent.deck, false, 0);
+        self.board = createBoard(self, 720, 720);
     }
 
     // update() {
