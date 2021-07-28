@@ -1,5 +1,4 @@
 import { attackSuccess, flipCard } from "./card";
-import { createPlayerData, removeCardFromHand } from "./player";
 
 export function createBoardData(cardsLayed = 0, cards = [
     [null, null,  null, null],
@@ -62,28 +61,12 @@ export function addCardToBoard(scene, isLocalPlayer, card, xQuadrant, yQuadrant)
     
     if (isLocalPlayer) {
         // remove card from players hand
-        scene.localPlayer = createPlayerData(
-            scene.localPlayer.name,
-            scene.localPlayer.deck,
-            scene.localPlayer.isLocalPlayer,
-            scene.localPlayer.score,
-            scene.localPlayer.color,
-            removeCardFromHand(scene.localPlayer.hand.indexOf(card), scene.localPlayer.hand),
-            scene.localPlayer.isPlayerA
-        );
+        scene.localPlayer = {...scene.localPlayer, hand: removeCardFromHand(scene.localPlayer.hand.indexOf(card), scene.localPlayer.hand)};
     } else {
         // remove top placeholder card from opponents hand
         scene.mockOpponent.hand[0].destroy();
 
-        scene.mockOpponent = createPlayerData(
-            scene.mockOpponent.name,
-            scene.mockOpponent.deck,
-            scene.mockOpponent.isLocalPlayer,
-            scene.mockOpponent.score,
-            scene.mockOpponent.color,
-            removeCardFromHand(0, scene.mockOpponent.hand),
-            scene.mockOpponent.isPlayerA
-        );
+        scene.mockOpponent = {...scene.mockOpponent, hand: removeCardFromHand(0, scene.mockOpponent.hand)};
     }
 
     // add card to board data 

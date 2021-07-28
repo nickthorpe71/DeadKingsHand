@@ -20,6 +20,13 @@ export function createCardData(name, attack, defense, up, right, down, left, ima
     });
 }
 
+export function updateCardData(keyToChange, existingCardData, newValue) {
+    return {
+        ...existingCardData,
+        keyToChange: newValue
+    }
+}
+
 export function attackSuccess(attacker, defender, attackDirection, defendDirection) {
     return (attacker[attackDirection] * attacker.attack) > (defender[defendDirection] * defender.defense);
 }
@@ -34,20 +41,7 @@ export function flipCard(scene, card) {
         card.x,
         card.y,
         `mockCard${capitalizeFirstLetter(newColor)}`,
-        createCardData(
-            card.data.values.name,
-            card.data.values.attack,
-            card.data.values.defense,
-            card.data.values.up,
-            card.data.values.right,
-            card.data.values.down,
-            card.data.values.left,
-            `mockCard${capitalizeFirstLetter(newColor)}`,
-            card.data.values.xQuadrant,
-            card.data.values.yQuadrant,
-            card.data.values.ownerColor,
-            newColor,
-        ),
+        {...card.data.values, image: `mockCard${capitalizeFirstLetter(newColor)}`},
         card.data.values.heightScale,
         card.data.values.widthScale,
         false,

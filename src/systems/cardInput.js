@@ -1,5 +1,4 @@
-import { addCardToBoard, calcQuadrant, updatedBoardCards } from '../entities/board';
-import { createCardData } from '../entities/card';
+import { addCardToBoard, calcQuadrant } from '../entities/board';
 
 export function subscribeToLocalCardInputEvents(scene) {
 
@@ -32,20 +31,7 @@ export function subscribeToLocalCardInputEvents(scene) {
             card.y = card.input.dragStartY;
         } else {
             // set quadrants of card
-            card.setData(createCardData(
-                card.data.values.name,
-                card.data.values.attack,
-                card.data.values.defense,
-                card.data.values.up,
-                card.data.values.right,
-                card.data.values.down,
-                card.data.values.left,
-                card.data.values.image,
-                xQuadrant,
-                yQuadrant,
-                card.data.values.ownerColor,
-                card.data.values.currentColor,
-            ));
+            card.setData({...card.data.values, xQuadrant, yQuadrant});
 
             const updatedCard = addCardToBoard(scene, true, card, xQuadrant, yQuadrant);
             // emit event to server (to send to other player)

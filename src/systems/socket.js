@@ -1,6 +1,6 @@
 import io from 'socket.io-client';
 import { addCardToBoard } from '../entities/board';
-import { createPlayerData, dealPlayerHand } from '../entities/player';
+import { dealPlayerHand } from '../entities/player';
 import { enableDealing, instantiateGameObject } from './gameEvents';
 
 export function createSocket(uri) {
@@ -28,30 +28,13 @@ export function subscribeSocketToEvents(socket, scene) {
             }
         });
 
-        scene.localPlayer = createPlayerData(scene.localPlayer.name, playerDeckColorAdjust, scene.localPlayer.isLocalPlayer, scene.localPlayer.score, 'blue', [], true);
+        scene.localPlayer = {...scene.localPlayer, deck: playerDeckColorAdjust, color: 'blue', isPlayerA: true};
         enableDealing(scene);
     });
 
     socket.on('dealCards', () => {
-        scene.localPlayer = createPlayerData(
-            scene.localPlayer.name, 
-            scene.localPlayer.deck, 
-            scene.localPlayer.isLocalPlayer,
-            scene.localPlayer.score,
-            scene.localPlayer.color, 
-            dealPlayerHand(scene, scene.localPlayer.deck, scene.localPlayer),
-            scene.localPlayer.isPlayerA
-        );
-
-        scene.mockOpponent = createPlayerData(
-            scene.mockOpponent.name, 
-            scene.mockOpponent.deck, 
-            scene.mockOpponent.isLocalPlayer,
-            scene.mockOpponent.score, 
-            scene.mockOpponent.color, 
-            dealPlayerHand(scene, scene.mockOpponent.deck, scene.mockOpponent),
-            scene.mockOpponent.isPlayerA
-        );
+        scene.localPlayer = {...scene.localPlayer, hand: dealPlayerHand(scene, scene.localPlayer.deck, scene.localPlayer)};
+        scene.mockOpponent = {...scene.mockOpponent, hand: dealPlayerHand(scene, scene.mockOpponent.deck, scene.mockOpponent)};
     });
 
     socket.on('cardPlayed', (card, cardData, isPlayerA, xQuadrant, yQuadrant) => {
