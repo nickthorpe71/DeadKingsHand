@@ -37,6 +37,7 @@ export function subscribeToLocalCardInputEvents(scene) {
             card.setData({...card.data.values, xQuadrant, yQuadrant});
 
             const updatedCard = addCardToBoard(scene, true, card, xQuadrant, yQuadrant);
+            console.log(updatedCard)
             // emit event to server (to send to other player)
             scene.socket.emit('cardPlayed', updatedCard, updatedCard.data.values, scene.localPlayer.isPlayerA, xQuadrant, yQuadrant);
         }

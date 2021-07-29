@@ -1,7 +1,8 @@
 import io from 'socket.io-client';
 import { addCardToBoard } from '../entities/board';
 import { dealPlayerHand } from '../entities/player';
-import { enableDealing, instantiateGameObject } from './gameEvents';
+import { enableDealing } from './gameEvents';
+import { createCardData, instantiateCard } from '../entities/card';
 
 export function createSocket(uri) {
     return io(uri, {transports : ["websocket"] })
@@ -40,7 +41,8 @@ export function subscribeSocketToEvents(socket, scene) {
     socket.on('cardPlayed', (card, cardData, isPlayerA, xQuadrant, yQuadrant) => {
         // if the other player plays a card
         if (isPlayerA !== scene.localPlayer.isPlayerA) {
-            const updatedCard = instantiateGameObject(scene, 0, 0, card.textureKey, cardData, cardData.heightScale, cardData.widthScale, false, false);
+            const newCardData = {...cardData, image: card.textureKey};
+            const updatedCard = instantiateCard(scene, 0, 0, newCardData, false);
             addCardToBoard(scene, false, updatedCard, xQuadrant, yQuadrant);
         }
     });

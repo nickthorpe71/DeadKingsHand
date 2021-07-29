@@ -31,11 +31,21 @@ export function instantiateCard(scene, x, y, cardData, interactive) {
     }
 
     const image = instantiateGameObject(scene, 0, 0, cardData.image, {}, cardData.heightScale, cardData.widthScale, false, false);
-    const style = { font: "32px Arial", fill: "#000", wordWrap: true, wordWrapWidth: image.width, align: "center", backgroundColor: "transparent" };
-    const text = scene.add.text(0, 0, "test", style);
-    // text.anchor.set(0.5);
-    
-    newCardContainer.add([image, text]);
+    const textStyle = { font: "20px Arial", fill: "#000", wordWrap: true, wordWrapWidth: image.width, align: "center", backgroundColor: "transparent" };
+
+    if (cardData.image !== 'cardBack') {
+        const upText = scene.add.text(0, -85, cardData.up, textStyle);
+        const rightText = scene.add.text(70, -10, cardData.right, textStyle);
+        const downText = scene.add.text(0, 60, cardData.down, textStyle);
+        const leftText = scene.add.text(-80, -10, cardData.left, textStyle);
+
+        const attkText = scene.add.text(-85, -85, 'A:' + cardData.attack, textStyle);
+        const defText = scene.add.text(-85, -65, 'D:' + cardData.defense, textStyle);
+
+        newCardContainer.add([image, upText, rightText, downText, leftText, attkText, defText]);
+    } else {
+        newCardContainer.add([image]);
+    }
 
     return newCardContainer;
 }
