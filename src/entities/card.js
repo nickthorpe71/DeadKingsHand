@@ -20,17 +20,24 @@ export function createCardData(name, attack, defense, up, right, down, left, ima
     });
 }
 
-export function instantiateCard(scene, x, y, cardData) {
-    const container = scene.add.container(x, y);
+export function instantiateCard(scene, x, y, cardData, interactive) {
+    const newCardContainer = scene.add.container(x, y);    
+    newCardContainer.setData(cardData);
+    newCardContainer.setSize(180, 180);
 
-    const image = instantiateGameObject(scene, x, y, cardData.image, cardData, 1, 1, true, true);
+    if (interactive){
+        newCardContainer.setInteractive();
+        scene.input.setDraggable(newCardContainer);
+    }
+
+    const image = instantiateGameObject(scene, 0, 0, cardData.image, {}, cardData.heightScale, cardData.widthScale, false, false);
     const style = { font: "32px Arial", fill: "#000", wordWrap: true, wordWrapWidth: image.width, align: "center", backgroundColor: "transparent" };
-    const text = scene.add.text(x + 50, y, "test", style);
+    const text = scene.add.text(0, 0, "test", style);
     // text.anchor.set(0.5);
     
-    container.add([image, text]);
+    newCardContainer.add([image, text]);
 
-    return container;
+    return newCardContainer;
 }
 
 export function attackSuccess(attacker, defender, attackDirection, defendDirection) {

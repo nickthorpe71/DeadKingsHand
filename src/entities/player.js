@@ -1,5 +1,5 @@
 import { updateBoard } from "./board"
-import { createCardData } from '../entities/card';
+import { createCardData, instantiateCard } from '../entities/card';
 import { instantiateGameObject } from "../systems/gameEvents";
 
 export function createPlayerData(name, deck, isLocalPlayer, score, color = 'red', hand = [], isPlayerA = false) {
@@ -49,15 +49,11 @@ export function dealPlayerHand(scene, deck, player) {
             player.color
         );
         
-        return instantiateGameObject(
+        return instantiateCard(
             scene,
             handPosition, 
             handDistanceFromTop + (index * 60),
-            card.image,
             card,
-            card.heightScale,
-            card.widthScale,
-            player.isLocalPlayer,
             player.isLocalPlayer
         )
     });

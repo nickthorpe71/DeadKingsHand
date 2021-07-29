@@ -3,7 +3,8 @@ import { addCardToBoard, calcQuadrant } from '../entities/board';
 export function subscribeToLocalCardInputEvents(scene) {
 
     scene.input.on('dragstart', (pointer, card) => {
-        card.setTint(0x5ee0cc);
+        // set tint of card image
+        card.list[0].setTint(0x5ee0cc);
         scene.children.bringToTop(card);
     });
 
@@ -13,7 +14,8 @@ export function subscribeToLocalCardInputEvents(scene) {
     });
 
     scene.input.on('dragend', (pointer, card, dropped) => {
-        card.setTint();
+        // set tint of card image
+        card.list[0].setTint();
         if (!dropped) {
             card.x = card.input.dragStartX;
             card.y = card.input.dragStartY;
@@ -26,7 +28,8 @@ export function subscribeToLocalCardInputEvents(scene) {
 
         // if there is not a card in this slot
         if (scene.board.data.values.cards[yQuadrant][xQuadrant] !== null) {
-            card.setTint();
+            // set tint of card image
+            card.list[0].setTint();
             card.x = card.input.dragStartX;
             card.y = card.input.dragStartY;
         } else {
