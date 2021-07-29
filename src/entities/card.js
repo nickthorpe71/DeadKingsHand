@@ -20,11 +20,17 @@ export function createCardData(name, attack, defense, up, right, down, left, ima
     });
 }
 
-export function updateCardData(keyToChange, existingCardData, newValue) {
-    return {
-        ...existingCardData,
-        keyToChange: newValue
-    }
+export function instantiateCard(scene, x, y, cardData) {
+    const container = scene.add.container(x, y);
+
+    const image = instantiateGameObject(scene, x, y, cardData.image, cardData, 1, 1, true, true);
+    const style = { font: "32px Arial", fill: "#000", wordWrap: true, wordWrapWidth: image.width, align: "center", backgroundColor: "transparent" };
+    const text = scene.add.text(x + 50, y, "test", style);
+    // text.anchor.set(0.5);
+    
+    container.add([image, text]);
+
+    return container;
 }
 
 export function attackSuccess(attacker, defender, attackDirection, defendDirection) {

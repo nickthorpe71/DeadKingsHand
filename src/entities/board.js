@@ -1,4 +1,5 @@
 import { attackSuccess, flipCard } from "./card";
+import { removeCardFromHand } from "./player";
 
 export function createBoardData(cardsLayed = 0, cards = [
     [null, null,  null, null],
