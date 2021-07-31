@@ -19,13 +19,13 @@ export function subscribeSocketToEvents(socket, scene) {
         const playerDeckColorAdjust = scene.localPlayer.deck.map(card => {
             return {
                 name:card.name, 
-                attack: card.attack, 
-                defense: card.defense, 
+                rankClass: card.rankClass, 
+                level: card.level, 
                 up: card.up, 
                 right: card.right, 
                 down: card.down, 
                 left: card.left, 
-                image: "mockCardBlue"
+                image: card.image
             }
         });
 

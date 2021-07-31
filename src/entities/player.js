@@ -1,6 +1,5 @@
 import { updateBoard } from "./board"
 import { createCardData, instantiateCard } from '../entities/card';
-import { instantiateGameObject } from "../systems/gameEvents";
 
 export function createPlayerData(name, deck, isLocalPlayer, score, color = 'red', hand = [], isPlayerA = false) {
     return Object.freeze({
@@ -36,8 +35,8 @@ export function dealPlayerHand(scene, deck, player) {
 
         const card = createCardData(
             cardData.name,
-            cardData.attack,
-            cardData.defense,
+            cardData.rankClass,
+            cardData.level,
             cardData.up,
             cardData.right,
             cardData.down,

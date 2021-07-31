@@ -3,83 +3,83 @@
     "deck": [
         {
             "name":"Cain the Elder", 
-            "attack": 5, 
-            "defense": 4, 
-            "up": 2, 
-            "right": 1, 
-            "down": 2, 
-            "left": 1, 
-            "image": "mockCardRed"
+            "rankClass": 5, 
+            "level": 6,
+            "up": 221, 
+            "right": 154, 
+            "down": 263, 
+            "left": 134, 
+            "image": "puke"
         },
         {
             "name":"Kael Rills", 
-            "attack": 7, 
-            "defense": 7, 
-            "up": 4, 
-            "right": 4, 
-            "down": 4, 
-            "left": 4, 
-            "image": "mockCardRed"
+            "level": 6,
+            "rankClass": 12, 
+            "up": 436, 
+            "right": 412, 
+            "down": 443, 
+            "left": 467, 
+            "image": "gambler"
         },
         {
             "name":"Pepin the Healer", 
-            "attack": 2, 
-            "defense": 4, 
-            "up": 2, 
-            "right": 2, 
-            "down": 2, 
-            "left": 2, 
-            "image": "mockCardRed"
+            "level": 7,
+            "rankClass": 2, 
+            "up": 625, 
+            "right": 234, 
+            "down": 235, 
+            "left": 123, 
+            "image": "puke"
         },
         {
             "name":"Gillian the Barmaid", 
-            "attack": 11, 
-            "defense": 8, 
-            "up": 2, 
-            "right": 4, 
-            "down": 4, 
-            "left": 1, 
-            "image": "mockCardRed"
+            "level": 16,
+            "rankClass": 11, 
+            "up": 245, 
+            "right": 543, 
+            "down": 432, 
+            "left": 711, 
+            "image": "maid"
         },
         {
             "name":"Griswold the Blacksmith", 
-            "attack": 10, 
-            "defense": 13, 
-            "up": 3, 
-            "right": 3, 
-            "down": 3, 
-            "left": 3, 
-            "image": "mockCardRed"
+            "level": 22,
+            "rankClass": 10, 
+            "up": 1053, 
+            "right": 352, 
+            "down": 963, 
+            "left": 343, 
+            "image": "gris"
         },
         {
             "name":"Farnham the Drunk", 
-            "attack": 3, 
-            "defense": 1, 
-            "up": 2, 
-            "right": 5, 
-            "down": 4, 
-            "left": 3, 
-            "image": "mockCardRed"
+            "level": 4,
+            "rankClass": 3, 
+            "up": 192, 
+            "right": 495, 
+            "down": 194, 
+            "left": 393, 
+            "image": "puke"
         },
         {
             "name":"Ogden the Tavern Owner", 
-            "attack": 2, 
-            "defense": 3, 
-            "up": 3, 
-            "right": 3, 
-            "down": 3, 
-            "left": 3, 
-            "image": "mockCardRed"
+            "level": 5,
+            "rankClass": 2, 
+            "up": 323, 
+            "right": 433, 
+            "down": 323, 
+            "left": 346, 
+            "image": "puke"
         },
         {
             "name":"Adria the Witch", 
-            "attack": 8, 
-            "defense": 5, 
-            "up": 3, 
-            "right": 3, 
-            "down": 2, 
-            "left": 3, 
-            "image": "mockCardRed"
+            "level": 18,
+            "rankClass": 8, 
+            "up": 983, 
+            "right": 783, 
+            "down": 562, 
+            "left": 563, 
+            "image": "puke"
         }
     ]
 }

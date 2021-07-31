@@ -23,8 +23,15 @@ export default class OnlineMatch extends Phaser.Scene {
 
     preload() {
         this.load.image('cardBack', 'src/assets/CardBack.png');
-        this.load.image('mockCardBlue', 'src/assets/MockCardBlue.png');
-        this.load.image('mockCardRed', 'src/assets/MockCardRed.png');
+        this.load.image('redBG', 'src/assets/RedCardBack.png');
+        this.load.image('blueBG', 'src/assets/BlueCardBack.png');
+        this.load.image('gambler', 'src/assets/gambler.png');
+        this.load.image('gris', 'src/assets/gris.png');
+        this.load.image('maid', 'src/assets/maid.png');
+        this.load.image('puke', 'src/assets/puke.png');
+
+        // this.load.image('mockCardBlue', 'src/assets/MockCardBlue.png');
+        // this.load.image('mockCardRed', 'src/assets/MockCardRed.png');
 
         this.objects = {};
     }

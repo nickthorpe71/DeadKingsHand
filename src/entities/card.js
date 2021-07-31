@@ -1,11 +1,11 @@
 import { instantiateGameObject } from "../systems/gameEvents";
 import { capitalizeFirstLetter } from "../systems/utils";
 
-export function createCardData(name, attack, defense, up, right, down, left, image, xQuadrant, yQuadrant, ownerColor, currentColor) {
+export function createCardData(name, rankClass, level, up, right, down, left, image, xQuadrant, yQuadrant, ownerColor, currentColor) {
     return Object.freeze({
         name, 
-        attack, 
-        defense, 
+        rankClass, 
+        level, 
         up, 
         right, 
         down, 
@@ -30,19 +30,28 @@ export function instantiateCard(scene, x, y, cardData, interactive) {
         scene.input.setDraggable(newCardContainer);
     }
 
+    let background = 'blueBG';
+
+    if(cardData.currentColor === 'red')
+    background = 'redBG'
+
+    const backgroundImage = instantiateGameObject(scene, 0, 0, background, {}, cardData.heightScale, cardData.widthScale, false, false);
     const image = instantiateGameObject(scene, 0, 0, cardData.image, {}, cardData.heightScale, cardData.widthScale, false, false);
-    const textStyle = { font: "20px Arial", fill: "#000", wordWrap: true, wordWrapWidth: image.width, align: "center", backgroundColor: "transparent" };
+    const textStyle = { font: "16px Arial", fill: "#000", wordWrap: true, wordWrapWidth: image.width, align: "center", backgroundColor: "transparent" };
 
     if (cardData.image !== 'cardBack') {
-        const upText = scene.add.text(0, -85, cardData.up, textStyle);
-        const rightText = scene.add.text(70, -10, cardData.right, textStyle);
-        const downText = scene.add.text(0, 60, cardData.down, textStyle);
-        const leftText = scene.add.text(-80, -10, cardData.left, textStyle);
+        const upText = scene.add.text(-10, -85, cardData.up, textStyle);
+        const rightText = scene.add.text(66, 10, cardData.right, textStyle);
+        const downText = scene.add.text(-10, 65, cardData.down, textStyle);
+        const leftText = scene.add.text(-66, -15, cardData.left, textStyle);
 
-        const attkText = scene.add.text(-85, -85, 'A:' + cardData.attack, textStyle);
-        const defText = scene.add.text(-85, -65, 'D:' + cardData.defense, textStyle);
+        leftText.angle = 90;
+        rightText.angle = -90;
 
-        newCardContainer.add([image, upText, rightText, downText, leftText, attkText, defText]);
+        const rankClassText = scene.add.text(-85, -85, 'C:' + cardData.rankClass, textStyle);
+        const levelText = scene.add.text(-85, -65, 'Lvl:' + cardData.level, textStyle);
+
+        newCardContainer.add([backgroundImage, image, upText, rightText, downText, leftText, rankClassText, levelText]);
     } else {
         newCardContainer.add([image]);
     }
@@ -51,7 +60,7 @@ export function instantiateCard(scene, x, y, cardData, interactive) {
 }
 
 export function attackSuccess(attacker, defender, attackDirection, defendDirection) {
-    return (attacker[attackDirection] * attacker.attack) > (defender[defendDirection] * defender.defense);
+    return (attacker[attackDirection] > defender[defendDirection]);
 }
 
 export function flipCard(scene, card) {
@@ -59,15 +68,11 @@ export function flipCard(scene, card) {
 
     // create and render new card
     const newColor = (card.data.values.currentColor === 'red' ) ? 'blue' : 'red';
-    const newCard = instantiateGameObject(
+    const newCard = instantiateCard(
         scene,
         card.x,
         card.y,
-        `mockCard${capitalizeFirstLetter(newColor)}`,
-        {...card.data.values, image: `mockCard${capitalizeFirstLetter(newColor)}`},
-        card.data.values.heightScale,
-        card.data.values.widthScale,
-        false,
+        {...card.data.values, currentColor: newColor},
         false
     );
 
