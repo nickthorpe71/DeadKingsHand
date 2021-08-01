@@ -43,22 +43,20 @@ export function calcQuadrant(pointerDown, edgeComp, widthOrHeight) {
     const placed = (pointerDown - edgeComp);
     let quadrant = 0;
 
-    if (placed < widthOrHeight * 0.25)
+    if (placed < widthOrHeight * 0.33)
         quadrant = 0;
-    else if (placed < widthOrHeight * 0.5)
+    else if (placed < widthOrHeight * 0.66)
         quadrant = 1;
-    else if (placed < widthOrHeight * 0.75)
-        quadrant = 2;
     else if (placed < widthOrHeight)
-        quadrant = 3;
+        quadrant = 2;
 
     return quadrant;
 }
 
 export function addCardToBoard(scene, isLocalPlayer, card, xQuadrant, yQuadrant) {
     // snap card to board slot
-    card.x = xQuadrant * 180 + 370;
-    card.y = yQuadrant * 180 + 205;
+    card.x = xQuadrant * 240 + 400;
+    card.y = yQuadrant * 240 + 235;
     
     if (isLocalPlayer) {
         // remove card from players hand

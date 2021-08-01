@@ -24,3 +24,36 @@ export function enableDealing(scene) {
         scene.dealText.setColor('#222');
     });
 }
+
+export function renderScores(scene) {
+    const redStyle = { font: "42px TimesNewRoman", fill: "#f00", wordWrap: true, wordWrapWidth: 100, align: "center", backgroundColor: "transparent" };
+    const blueStyle = { font: "42px TimesNewRoman", fill: "#00f", wordWrap: true, wordWrapWidth: 100, align: "center", backgroundColor: "transparent" };
+    
+    scene.localPlayerScore = scene.add.text(1060, 50, scene.localPlayer.score, scene.localPlayer.color === 'red' ? redStyle : blueStyle);
+    scene.mockOpponentScore = scene.add.text(200, 50, scene.mockOpponent.score, scene.mockOpponent.color === 'red' ? redStyle : blueStyle);
+
+    updateScores(scene);
+}
+
+// TODO: need to refactor to get rid of loop
+export function updateScores(scene) {
+    let playerScore = 0;
+    let opponentScore = 0;
+
+    for (let i = 0; i < scene.board.data.values.cards.length; i++) {
+        for (let j = 0; j < scene.board.data.values.cards[i].length; j++) {
+            if (scene.board.data.values.cards[i][j]) {
+                if (scene.board.data.values.cards[i][j].data.values.currentColor === scene.localPlayer.color)
+                    playerScore++;
+                if (scene.board.data.values.cards[i][j].data.values.currentColor === scene.mockOpponent.color)
+                    opponentScore++;
+            }
+        }
+    }
+
+    scene.localPlayer.score = playerScore;
+    scene.mockOpponent.score = opponentScore;
+
+    scene.localPlayerScore.setText(playerScore);
+    scene.mockOpponentScore.setText(opponentScore);
+}

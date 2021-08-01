@@ -1,4 +1,5 @@
 import { addCardToBoard, calcQuadrant } from '../entities/board';
+import { updateScores, renderScores } from './gameEvents';
 
 export function subscribeToLocalCardInputEvents(scene) {
 
@@ -27,19 +28,21 @@ export function subscribeToLocalCardInputEvents(scene) {
         const yQuadrant = calcQuadrant(pointer.upY, 125, scene.board.height);
 
         // if there is not a card in this slot
-        if (scene.board.data.values.cards[yQuadrant][xQuadrant] !== null) {
-            // set tint of card image
-            card.list[0].setTint();
-            card.x = card.input.dragStartX;
-            card.y = card.input.dragStartY;
-        } else {
+        if (scene.board.data.values.cards[yQuadrant][xQuadrant] === null || card.data.values.rankClass > scene.board.data.values.cards[yQuadrant][xQuadrant].data.values.rankClass) {
             // set quadrants of card
             card.setData({...card.data.values, xQuadrant, yQuadrant});
 
             const updatedCard = addCardToBoard(scene, true, card, xQuadrant, yQuadrant);
-            console.log(updatedCard)
+            updatedCard.disableInteractive();
+            scene.input.setDraggable(updatedCard, false);
             // emit event to server (to send to other player)
             scene.socket.emit('cardPlayed', updatedCard, updatedCard.data.values, scene.localPlayer.isPlayerA, xQuadrant, yQuadrant);
+        } else {
+            card.list[0].setTint();
+            card.x = card.input.dragStartX;
+            card.y = card.input.dragStartY;
         }
+
+        updateScores(scene);
     });
 }

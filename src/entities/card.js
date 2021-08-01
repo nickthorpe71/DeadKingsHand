@@ -1,4 +1,4 @@
-import { instantiateGameObject } from "../systems/gameEvents";
+import { instantiateGameObject, updateScores } from "../systems/gameEvents";
 import { capitalizeFirstLetter } from "../systems/utils";
 
 export function createCardData(name, rankClass, level, up, right, down, left, image, xQuadrant, yQuadrant, ownerColor, currentColor) {
@@ -15,15 +15,15 @@ export function createCardData(name, rankClass, level, up, right, down, left, im
         yQuadrant,
         ownerColor,
         currentColor,
-        heightScale: 0.246,
-        widthScale: 0.246,
+        heightScale: 0.33,
+        widthScale: 0.33,
     });
 }
 
 export function instantiateCard(scene, x, y, cardData, interactive) {
     const newCardContainer = scene.add.container(x, y);    
     newCardContainer.setData(cardData);
-    newCardContainer.setSize(180, 180);
+    newCardContainer.setSize(240, 240);
 
     if (interactive){
         newCardContainer.setInteractive();
@@ -33,23 +33,24 @@ export function instantiateCard(scene, x, y, cardData, interactive) {
     let background = 'blueBG';
 
     if(cardData.currentColor === 'red')
-    background = 'redBG'
+        background = 'redBG'
 
-    const backgroundImage = instantiateGameObject(scene, 0, 0, background, {}, cardData.heightScale, cardData.widthScale, false, false);
     const image = instantiateGameObject(scene, 0, 0, cardData.image, {}, cardData.heightScale, cardData.widthScale, false, false);
-    const textStyle = { font: "16px Arial", fill: "#000", wordWrap: true, wordWrapWidth: image.width, align: "center", backgroundColor: "transparent" };
 
     if (cardData.image !== 'cardBack') {
-        const upText = scene.add.text(-10, -85, cardData.up, textStyle);
-        const rightText = scene.add.text(66, 10, cardData.right, textStyle);
-        const downText = scene.add.text(-10, 65, cardData.down, textStyle);
-        const leftText = scene.add.text(-66, -15, cardData.left, textStyle);
+        const backgroundImage = instantiateGameObject(scene, 0, 0, background, {}, cardData.heightScale, cardData.widthScale, false, false);
+        const textStyle = { font: "18px TimesNewRoman", fill: "#000", wordWrap: true, wordWrapWidth: image.width, align: "center", backgroundColor: "transparent" };
+
+        const upText = scene.add.text(-12, -112, cardData.up, textStyle);
+        const rightText = scene.add.text(94, 10, cardData.right, textStyle);
+        const downText = scene.add.text(-12, 95, cardData.down, textStyle);
+        const leftText = scene.add.text(-94, -15, cardData.left, textStyle);
 
         leftText.angle = 90;
         rightText.angle = -90;
 
-        const rankClassText = scene.add.text(-85, -85, 'C:' + cardData.rankClass, textStyle);
-        const levelText = scene.add.text(-85, -65, 'Lvl:' + cardData.level, textStyle);
+        const rankClassText = scene.add.text(-110, -110, cardData.rankClass === 11 ? 'J' : cardData.rankClass === 12 ? 'Q' : cardData.rankClass === 13 ? 'A' : cardData.rankClass, textStyle);
+        const levelText = scene.add.text(-110, -90, 'Lvl:' + cardData.level, textStyle);
 
         newCardContainer.add([backgroundImage, image, upText, rightText, downText, leftText, rankClassText, levelText]);
     } else {
@@ -78,6 +79,8 @@ export function flipCard(scene, card) {
 
     // TODO: Destroy old card render at some point
     // card.destroy();
+
+    updateScores(scene);
 
     return newCard;
 }

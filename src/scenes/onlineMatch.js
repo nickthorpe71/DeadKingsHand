@@ -5,6 +5,7 @@ import {createBoard} from '../entities/board';
 // Event Systems
 import {createSocket, subscribeSocketToEvents} from '../systems/socket';
 import {subscribeToLocalCardInputEvents} from '../systems/cardInput';
+import { renderScores } from '../systems/gameEvents';
 
 // Mock API calls
 const playerDataRequest = require('../data/mockPlayer.json');
@@ -48,7 +49,7 @@ export default class OnlineMatch extends Phaser.Scene {
         // Entities
         createCamera(self);
         self.localPlayer = createPlayerData(playerDataRequest.name, playerDataRequest.deck, true, 0);
-        self.mockOpponent = createPlayerData(mockOpponent.name, mockOpponent.deck, false, 0);
+        self.mockOpponent = createPlayerData(mockOpponent.name, mockOpponent.deck, false, 0, 'blue');
         self.board = createBoard(self, 720, 720);
     }
 

@@ -2,7 +2,7 @@ import { updateBoard } from "./board"
 import { createCardData, instantiateCard } from '../entities/card';
 
 export function createPlayerData(name, deck, isLocalPlayer, score, color = 'red', hand = [], isPlayerA = false) {
-    return Object.freeze({
+    return {
         name,
         deck,
         isLocalPlayer,
@@ -10,8 +10,8 @@ export function createPlayerData(name, deck, isLocalPlayer, score, color = 'red'
         color,
         hand,
         isPlayerA
-    });
-}
+    };
+};
 
 /**
  * 
