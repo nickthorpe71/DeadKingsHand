@@ -6,6 +6,7 @@ import { instantiateCard } from '../entities/card';
 import { updateScores, renderScores } from './gameEvents';
 
 export function createSocket(uri) {
+    // return io(uri, {transports : ["websocket"] })
     return io(uri, {transports : ["websocket"] })
 }
 
