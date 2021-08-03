@@ -5,7 +5,6 @@ import {createBoard} from '../entities/board';
 // Event Systems
 import {createSocket, subscribeSocketToEvents} from '../systems/socket';
 import {subscribeToLocalCardInputEvents} from '../systems/cardInput';
-import { renderScores } from '../systems/gameEvents';
 
 // Mock API calls
 const playerDataRequest = require('../data/mockPlayer.json');

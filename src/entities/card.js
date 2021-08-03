@@ -39,7 +39,7 @@ export function instantiateCard(scene, x, y, cardData, interactive) {
 
     if (cardData.image !== 'cardBack') {
         const backgroundImage = instantiateGameObject(scene, 0, 0, background, {}, cardData.heightScale, cardData.widthScale, false, false);
-        const textStyle = { font: "18px TimesNewRoman", fill: "#000", wordWrap: true, wordWrapWidth: image.width, align: "center", backgroundColor: "transparent" };
+        const textStyle = { font: "18px MedievalSharp", fill: "#000", wordWrap: true, wordWrapWidth: image.width, align: "center", backgroundColor: "transparent" };
 
         const upText = scene.add.text(-12, -112, cardData.up, textStyle);
         const rightText = scene.add.text(94, 10, cardData.right, textStyle);
