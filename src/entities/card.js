@@ -1,5 +1,4 @@
 import { instantiateGameObject, updateScores } from "../systems/gameEvents";
-import { capitalizeFirstLetter } from "../systems/utils";
 
 export function createCardData(name, rankClass, level, up, right, down, left, image, xQuadrant, yQuadrant, ownerColor, currentColor) {
     return Object.freeze({

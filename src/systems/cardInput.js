@@ -1,11 +1,12 @@
 import { addCardToBoard, calcQuadrant } from '../entities/board';
-import { updateScores, renderScores } from './gameEvents';
+import { updateScores } from './gameEvents';
 
 export function subscribeToLocalCardInputEvents(scene) {
 
     scene.input.on('dragstart', (pointer, card) => {
         // set tint of card image
         card.list[0].setTint(0x5ee0cc);
+        console.log(card);
         scene.children.bringToTop(card);
     });
 
@@ -20,6 +21,8 @@ export function subscribeToLocalCardInputEvents(scene) {
         if (!dropped) {
             card.x = card.input.dragStartX;
             card.y = card.input.dragStartY;
+            // set card back to correct depth in hand
+            card.setDepth(scene.localPlayer.hand.indexOf(card));
         }
     });
 

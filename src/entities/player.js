@@ -51,10 +51,10 @@ export function dealPlayerHand(scene, deck, player) {
         return instantiateCard(
             scene,
             handPosition, 
-            handDistanceFromTop + (index * 60),
+            handDistanceFromTop + (index * 70),
             card,
             player.isLocalPlayer
-        )
+        ).setDepth(index);
     });
 }
 

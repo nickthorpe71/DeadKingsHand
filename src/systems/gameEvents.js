@@ -29,8 +29,8 @@ export function renderScores(scene) {
     const redStyle = { font: "42px TimesNewRoman", fill: "#f00", wordWrap: true, wordWrapWidth: 100, align: "center", backgroundColor: "transparent" };
     const blueStyle = { font: "42px TimesNewRoman", fill: "#00f", wordWrap: true, wordWrapWidth: 100, align: "center", backgroundColor: "transparent" };
     
-    scene.localPlayerScore = scene.add.text(1060, 50, scene.localPlayer.score, scene.localPlayer.color === 'red' ? redStyle : blueStyle);
-    scene.mockOpponentScore = scene.add.text(200, 50, scene.mockOpponent.score, scene.mockOpponent.color === 'red' ? redStyle : blueStyle);
+    scene.localPlayerScore = scene.add.text(1125, 50, scene.localPlayer.score, scene.localPlayer.color === 'red' ? redStyle : blueStyle);
+    scene.mockOpponentScore = scene.add.text(135, 50, scene.mockOpponent.score, scene.mockOpponent.color === 'red' ? redStyle : blueStyle);
 
     updateScores(scene);
 }
